@@ -19,6 +19,7 @@ import pytest
 
 import setuptools_scm._file_finders
 from .conftest import DebugMode
+from .conftest import write_pyproject_config
 from .wd_wrapper import WorkDir
 from setuptools_scm import Configuration
 from setuptools_scm import git
@@ -100,6 +101,7 @@ def test_git_gone(wd: WorkDir, monkeypatch: pytest.MonkeyPatch) -> None:
 @pytest.mark.issue("https://github.com/pypa/setuptools_scm/issues/298")
 @pytest.mark.issue(403)
 def test_file_finder_no_history(wd: WorkDir, caplog: pytest.LogCaptureFixture) -> None:
+    write_pyproject_config(wd.cwd, True)
     file_list = git_find_files(str(wd.cwd))
     assert file_list == []
 
@@ -362,6 +364,7 @@ def test_git_archive_export_ignore(
     wd("git add test1.txt test2.txt")
     wd.commit()
     monkeypatch.chdir(wd.cwd)
+    write_pyproject_config(wd.cwd, True)
     assert setuptools_scm._file_finders.find_files(".") == [opj(".", "test1.txt")]
 
 
@@ -372,6 +375,7 @@ def test_git_archive_subdirectory(wd: WorkDir, monkeypatch: pytest.MonkeyPatch) 
     wd("git add foobar")
     wd.commit()
     monkeypatch.chdir(wd.cwd)
+    write_pyproject_config(wd.cwd, True)
     assert setuptools_scm._file_finders.find_files(".") == [
         opj(".", "foobar", "test1.txt")
     ]
@@ -386,6 +390,7 @@ def test_git_archive_run_from_subdirectory(
     wd("git add foobar")
     wd.commit()
     monkeypatch.chdir(wd.cwd / "foobar")
+    write_pyproject_config(wd.cwd / "foobar", True)
     assert setuptools_scm._file_finders.find_files(".") == [opj(".", "test1.txt")]
 
 

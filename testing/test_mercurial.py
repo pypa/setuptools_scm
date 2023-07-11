@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 import setuptools_scm._file_finders
+from .conftest import write_pyproject_config
 from setuptools_scm import Configuration
 from setuptools_scm._run_cmd import has_command
 from setuptools_scm.hg import archival_to_version
@@ -71,6 +72,7 @@ def test_find_files_stop_at_root_hg(
     # issue 251
     wd.add_and_commit()
     monkeypatch.chdir(project)
+    write_pyproject_config(project, True)
     assert setuptools_scm._file_finders.find_files() == ["setup.cfg"]
 
 
